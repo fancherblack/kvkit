@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>kvkit | No Sharing Configuration</title>
+        <script type="text/javascript" src="/jquery/jquery.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body>
+        <div id="header">
+        <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+            <ul class="topNav secondary">
+                <a href='/'><i class="fas fa-home"></i> KV</a>
+                <span class="subtle"><i class="fas fa-database"></i> <span class="gray">${app_name} /</span> <span class="active">${kv_name}</span></span>
+            </ul>
+        </div>
+        <div id="content" style="scrollbar-width:none;">
+            <h2><strong><i class="fas fa-exclamation-circle"></i> No Sharing Configuration</strong></h2>
+            <p>Go to <a href="/edit/config/${app_name}/${kv_name}">Form Config</a> to enable sharing of the <span class="fixedWidth">${app_name}/${kv_name}</span> form.</p>
+        </div>
+    </body>
+</html>

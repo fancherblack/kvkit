@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <title>kvkit | New Host</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body class="page-appconfig">
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config" class="appconfig"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+            <ul class="topNav secondary">
+                <a href='/'><i class="fas fa-home"></i> KV</a>
+                <a class="active apphome" href='/orchestration'><i class="fas fa-exchange-alt"></i> Remote Jobs</a>
+            </ul>
+            </div>
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <div class="row">
+                <div class="col-5">
+
+                    <h2><strong>Add Remote Splunk Environment</strong></h2>
+                    <p>Define a new Splunk environment for remote KV store operations.</p>
+                    <form action="/orchestration/add" method="POST" id="create">                        
+                        <div id="fields">
+                            <div class="row">
+                                <div class="field col-6">
+                                    Hostname: 
+                                    <input class="form-control form-control-sm" name="hostname" placeholder="Hostname or IP" />
+                                </div>
+                                <div class="field col-6">
+                                    REST Port:
+                                    <input class="form-control form-control-sm" name="port" value="8089" />
+                                </div>
+                                <br /><br /><br />
+                                <div class="field col-6">
+                                    Username: 
+                                    <input class="form-control form-control-sm" name="username" placeholder="Splunk Username" /> 
+                                </div>
+                                <div class="field col-6">
+                                    Password: 
+                                    <input class="form-control form-control-sm" name="password" placeholder="Splunk Password" type="password" />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="primaryButton topPad">Add</button>
+                        ${err ? `<span style="color:red">Error: ${err}</span>` : ''}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

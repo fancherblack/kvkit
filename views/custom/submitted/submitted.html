@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>kvkit | submission received</title>
+        <script type="text/javascript" src="/jquery/jquery.js"></script>
+        <script src="/datatables/js/jquery.dataTables.min.js"></script>
+        <script src="/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body>
+
+        <div id="header">
+    
+                <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+    
+                    <ul class="topNav secondary">
+                        <a href="javascript:history.go(-1);"><i class="fas fa-chevron-left"></i> Go Back</a>
+                    </ul>
+                </div>
+                
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+
+        <h2>Thank you!</h2>
+        <p>Your form submission has been received.</p>
+
+        ${Object.keys(data).map(name => `
+            <div><strong>${name}: </strong>${data[name]}</div>
+        `).join("")}
+        </div>
+
+    </body>
+</html>

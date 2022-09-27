@@ -1,0 +1,328 @@
+<html>
+    <head>
+        <title>kvkit | ${app_name}/${kv_name} operations</title>
+        <script type="text/javascript" src="/jquery/jquery.js"></script>
+        <script src="/datatables/js/jquery.dataTables.min.js"></script>
+        <script src="/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+
+        <script>
+            $(document).ready(function() {
+                $('#data').DataTable();
+            });
+        </script>
+
+    </head>
+    <body class="page-operations">
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav secondary">
+                    <a href='/'><i class="fas fa-home"></i> KV</a>
+                    <span class="subtle"><i class="fas fa-database"></i> <span class="gray">${app_name} /</span> <span class="active">${kv_name}</span></span>
+
+                </ul>
+            </div>
+
+            <ul class="topSubNav">
+                <a href='/app/${app_name}/${kv_name}'>Data</a>
+                <a href='/edit/config/${app_name}/${kv_name}'>Config</a>
+                <a class='active' href="/operations/${app_name}/${kv_name}">Operations</a>
+                <a href='/form/${app_name}/${kv_name}'>Form</a>
+            </ul>
+        </div>
+
+        <div id="content">
+
+            <h2 class="nopad"><strong>Operations</strong></h2>
+            <p>Backup, import, and delete from the <span class="fixedWidth">${kv_name}</span> collection.</p>
+
+        <h2>Backups</h2>
+        <p>The following backups are on the kvkit server in the <span class="fixedWidth">$KVKIT_HOME/backups/${app_name}/${kv_name}/</span> directory.</p>
+        <table id="data" class="table table-striped thead-dark">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Timestamp</th>
+                    <th>Filename</th>
+                    <th>Filesize</th>
+                    <th>Records</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.keys(backupData).length !== 0 ? `
+                    ${Object.keys(backupData).map(backup => `
+                        <tr>
+                            <td>${backupData[backup].user}</td>
+                            <td>${backupData[backup].timestamp}</td>
+                            <td><a href="/backup/${app_name}/${kv_name}/${backup}">${backup}</a></td>
+                            <td>${backupData[backup].filesize/1000} kb</td>
+                            <td>${backupData[backup].records}</td>
+                            <td><button onclick="delete_backup('${backup}')" class="secondaryButton" style="margin-top: -5px; margin-bottom: -5px;">Delete</button></td>
+                        </tr>
+                    `).join("")}
+                ` : `<tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>`}
+            </tbody>
+        </table>
+
+        <button class="primaryButton" onclick='backup()'>Backup Now</button>
+<br /><br />
+        <hr />
+            <div class="row">
+                
+            	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 box">            
+        
+        <h2>Schedule Backups</h2>
+        <form action="/operations/${app_name}/${kv_name}" method="POST">
+
+            <strong>Current Schedule:</strong>
+            ${jobs[`${app_name}-${kv_name}`] ? jobs[`${app_name}-${kv_name}`].backup_schedule ? '' : 'None' : 'None'} ${jobs[`${app_name}-${kv_name}`] ? `<input class="form-control form-control-sm" name="backup_schedule" placeholder="crontab format" value="${jobs[`${app_name}-${kv_name}`].backup_schedule}"/>` : `<input class="form-control form-control-sm" name="backup_schedule" placeholder="enter crontab schedule" />`}
+            <br />
+            <button type="submit" class="primaryButton" style="float: left;">Enable Schedule</button>
+        </form>
+
+        <form action="/operations/${app_name}/${kv_name}" method="POST" class="cronClear">
+            <input style="display:none;" name="backup_schedule" value="CLEAR" />
+            <button type="submit" class="textButton" style="margin-left: 10px">Clear Schedule</button>
+        </form>
+
+    </div>
+
+    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 box">            
+
+
+<h2>Import Data</h2>
+<p>Append data to this collection from existing backup or your own CSV file. If you would like to overwrite contents, you must first empty the collection.</p>
+<label class="btn-file primaryButton">
+    Import Data <input id='import' type='file' onchange='importData()' style="display: none;">
+</label>
+
+</div>
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 box">            
+
+
+<h2 class="red"><i class="fas fa-bomb"></i> Delete Data or Collection</h2>
+
+    <script>
+        $(document).ready(function(){
+        $('#danger').prop("checked", false);
+        $("#kaboom").toggle();
+        $("#danger").click(function(){
+            $("#kaboom").toggle(5);
+        });
+        });
+    </script>
+
+        <p><input type="checkbox" id="danger"> <strong class="red">Show Destructive Controls.</strong> I understand that using this functionality results in <strong>immediate</strong> and <strong>irreversible</strong> action. Proceed with caution.</p>
+
+        <div id="kaboom">
+            <button class="primaryButton btn-file" onclick="clear_coll()">Empty Collection</button>
+            <button class="primaryButton btn-file" onclick="delete_coll()">Delete Collection</button>
+        </div>
+
+    </div>
+        </div>
+
+            <h2>Scheduled Remote Jobs</h2>
+            <p>Remote jobs involving <span class="fixedWidth">${kv_name}</span>.</p>
+            <table class="table table-striped thead-dark">
+                <thead>
+                <tr>
+                    <th>Destination(s)</th>
+                    <th>Crontab Schedule</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                ${Object.keys(jobs).length !== 0 ? `
+                    ${Object.values(jobs).map(job => `
+                        ${job.type === 'orchestration' ? `
+                            ${job.options.src.includes(kv_name) ? `
+                                <tr>
+                                    <td>${job.options.dst.join(' , ').replace(new RegExp('-','g'),'/')}</td>
+                                    <td>${job.format}</td>
+                                    <td><button class="primaryButton" onclick="removeJob('${job.job_id}')">Remove</button></td>
+                                </tr>
+                            ` : ''}
+                        ` : ''}
+                    `).join("")}
+                ` : `<tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                    </tr>
+                `}
+                </tbody>
+            </table>
+
+
+        </div>
+
+        </div>
+
+
+    </div>
+    <script>
+        function delete_backup(backup) {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST','/backup/${app_name}/${kv_name}/' + backup);
+            xhr.send(null);
+
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState === 4 && xhr.status === 200) window.location.reload();
+                else if(xhr.readyState === 4 && xhr.status !== 200) alert('Deletion Unsuccessful. Status Code: ' + xhr.status)
+            }
+        }
+
+        function clear_coll() {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST','/clear/${app_name}/${kv_name}');
+            xhr.send(null);
+
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState === 4 && xhr.status === 200) {
+                    alert('Clearing Successful!');
+                    window.location.reload();
+                } else if(xhr.readyState === 4 && xhr.status !== 200) alert('Clearing Unsuccessful. Status Code: ' + xhr.status)
+            }
+        }
+
+        function delete_coll() {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST','/delete/${app_name}/${kv_name}');
+            xhr.send(null);
+
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState === 4 && xhr.status === 200) {
+                    alert('Collection Deleted Successfully');
+                    window.location.href = '/';
+                } else if(xhr.readyState === 4 && xhr.status !== 200) alert('Deletion Unsuccessful. Status Code: ' + xhr.status);
+            }
+        }
+
+        function backup() {
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST','/backup/${app_name}/${kv_name}');
+            xhr.send(null);
+
+            xhr.onreadystatechange = () => {
+                if(xhr.readyState === 4 && xhr.status === 201) window.location.reload();
+                else if(xhr.readyState === 4 && xhr.status !== 200) alert('Backup Unsuccessful. Status Code: ' + xhr.status)
+            }
+        }
+
+        function restore() {
+            let reader = new FileReader();
+            
+            reader.onload = (e) => {
+                let xhr = new XMLHttpRequest();
+    
+                xhr.open('POST','/clear/${app_name}/${kv_name}');
+                xhr.send(null);
+
+                xhr.onreadystatechange = () => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        let lines = e.target.result.split('\\n');
+                        let fields = lines[0].split(',');
+
+                        lines.shift();
+
+                        for(let line of lines) {
+                            let obj = {};
+                            if(line !== '') {
+                                line = line.split(',');
+
+                                for(let chunk of line) {
+                                    let field = fields[line.indexOf(chunk)];
+                                    obj[field] = chunk;
+                                }
+
+                                let xhr = new XMLHttpRequest();
+            
+                                xhr.open('POST','/${app_name}/${kv_name}/addData');
+                                xhr.send(JSON.stringify(obj));
+                            }
+                        }
+
+                        alert('Data Restored');
+                    }
+                }
+            }
+
+            reader.readAsText(document.getElementById('restore').files[0]);
+        }
+
+        function importData() {
+            let reader = new FileReader();
+
+            reader.onload = (e) => {
+                let lines = e.target.result.split('\\n');
+                let fields = lines[0].split(',');
+
+                lines.shift()
+
+                for(let line of lines) {
+                    let obj = {};
+
+                    if(line !== '') {
+                        line = line.split(',');
+
+                        for(let chunk of line) {
+                            let field = fields[line.indexOf(chunk)];
+                            obj[field] = chunk;
+
+                            console.log(field); 
+                        }
+
+                        let xhr = new XMLHttpRequest();
+    
+                        xhr.open('POST','/${app_name}/${kv_name}/addData');
+                        xhr.send(JSON.stringify(obj));
+                    }
+                }
+
+                alert('Import Complete!');
+            }
+
+            reader.readAsText(document.getElementById('import').files[0]);
+        }
+
+        
+        function removeJob(id) {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/orchestration/job/remove');
+                xhr.onreadystatechange = e => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        alert('Removed job ' + id + ' successfully!');
+                        window.location.reload();
+                    } else if(xhr.readyState === 4 && xhr.status !== 200) alert('Job deletion unsuccessfull! - Status Code' + xhr.status);
+                }
+
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send('id=' + id);
+            }
+    </script>
+</body>
+</html>

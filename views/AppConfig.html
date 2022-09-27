@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>kvkit | App Configuration</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body class="page-appconfig">
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config" class="appconfig active"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav secondary">
+                    <a href='/'><i class="fas fa-home"></i> KV</a>
+                    <a class="apphome" href='/orchestration'><i class="fas fa-exchange-alt"></i> Remote Jobs</a>
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <div class="row">
+                <div class="col-md-5">
+
+        <form action="/admin/config" method="POST" id="conf">
+
+            <h2><strong>Splunk Configuration</strong></h2>
+            <div>REST Username <input name="username" value=${credentials.username} class="form-control form-control-sm padBottom"></div>
+            <div>REST Password &nbsp;<input type="password" name="password" value=${credentials.password} class="form-control form-control-sm padBottom"></div>
+            <div>Splunk Hostname<input name="hostname" value=${splunk.hostname} class="form-control form-control-sm padBottom"></div>
+            <div>REST API Port<input name="rest_port" value=${splunk.rest_port} class="form-control form-control-sm padBottom"></div>
+            <div>HEC Logging Hostname<input name="rest_port" value=${splunk.logging_hostname} class="form-control form-control-sm padBottom"></div>
+            <div>HEC Port<input name="hec_port" value=${splunk.hec_port} class="form-control form-control-sm padBottom"></div>
+            <div>HEC Token<input name="hec_port" value=${credentials.hecToken} class="form-control form-control-sm"></div>
+
+            <h2>Exclusions</h2>
+            <div>Roles<input class="form-control form-control-sm padBottom" name="excluded_roles" value=${config.excluded_roles.join(',')}></div>
+            <div>Apps<input class="form-control form-control-sm padBottom" name="excluded_apps" value=${config.excluded_apps.join(',')}></div>
+            <div>Collections<input class="form-control form-control-sm padBottom" name="excluded_kvstores" value=${config.excluded_kvstores.join(',')}></div>
+
+            <h2>Email</h2>
+            <div>Hostname<input class="form-control form-control-sm padBottom" name="email_host" value=${email.host}></div>
+            <div>Port<input class="form-control form-control-sm padBottom" name="email_port" value=${email.port}></div>
+            <div>Secure<input type="checkbox" ${email ? email.secure ? 'checked' : '' : ''} class="form-control form-control-sm padBottom" name="email_secure"></div>
+            <div>User<input class="form-control form-control-sm padBottom" name="email_user" value=${email.auth.user}></div>
+            <div>Pass<input class="form-control form-control-sm padBottom" name="email_pass" value=${email.auth.pass}></div>
+
+
+            <h2>Other</h2>
+            <div>Max Splunk Search Time (seconds)<input name="max_search_time" value=${config.max_search_time} class="form-control form-control-sm padBottom"/></div>
+
+            <button class="primaryButton topPad" type='submit'>Update</button>
+        </form>
+
+        </div>
+
+        </div>
+        </div>
+    </div>
+    </body>
+</html>

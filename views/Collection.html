@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <title>kvkit | view ${app_name}/${kv_name}</title>
+        <script type="text/javascript" src="/jquery/jquery.js"></script>
+        <script src="/datatables/js/jquery.dataTables.min.js"></script>
+        <script src="/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="/datatables-bs4/css/dataTables.bootstrap4.min.css" />
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+
+        <script>
+            $(document).ready(function() {
+                $('#data').DataTable();
+            });
+        </script>
+
+    </head>
+    <body class="page-collection">
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav secondary">
+                    <a href='/'><i class="fas fa-home"></i> KV</a>
+                    <span class="subtle"><i class="fas fa-database"></i> <span class="gray">${app_name} /</span> <span class="active">${kv_name}</span></span>
+
+                </ul>
+            </div>
+
+            <ul class="topSubNav">
+                <a class="active" href='/app/${app_name}/${kv_name}'>Data</a>
+                <a href='/edit/config/${app_name}/${kv_name}'>Config</a>
+                <a href="/operations/${app_name}/${kv_name}">Operations</a>
+                <a href='/form/${app_name}/${kv_name}'>Form</a>
+            </ul>
+            
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+
+            <div class="row">
+                <div class="col-md-12">
+                <h2 class="nopad"><strong>View Collection</strong></h2>
+                <p>Browse, sort, search, and edit records in ${kv_name}.</p>
+
+        <table id="data" class="table table-striped thead-dark">
+            <thead>
+            <tr>
+                ${data.fields.map(field => `
+                    <th scope="col">${field}</th>
+                `).join("")}
+                <th scope="col" class="nosort"></th>
+            </tr>
+            </thead>
+            <tbody>
+            ${data.data.map(row => `
+                <tr scope="row" id=${row._key}>
+                    ${Object.values(row).map(value => `
+                        ${value !== row._key ? `
+                            <td>${value}</td>
+                        ` : ''}
+                    `).join("")}
+                    <td><span class="shim"></span><a href="/update/${app_name}/${kv_name}/${row._key}" class="secondaryButton">Edit</a><a href="#" class="secondaryButton" id=${row._key} onclick="removeRow('${row._key}')">Delete</a></td>
+                </tr>
+            `).join("")}
+            </tbody>
+        </table>
+
+        </div>
+        </div>
+    </div>
+        <script>
+            document.body.onload = function() {
+                for(let td of document.getElementsByTagName('td')) {
+                    console.log(td.innerText)
+                    if(td.innerText.includes('[KVKIT_UPLOAD] ')) {
+                        td.innerText = td.innerText.replace('[KVKIT_UPLOAD] ','');
+                        td.innerHTML = '<a href="' + td.innerText + '">' + td.innerText.split('/')[4].split('-').splice(1).join('-') + '</a>';
+                    }
+                }
+            }
+
+
+            function removeRow(key) {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/remove/${app_name}/${kv_name}/' + key);
+                xhr.send(null);
+
+                xhr.onreadystatechange = () => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        window.location.reload();
+                    }
+                };
+
+                xhr.onerror = err => {
+                    if(err) console.log(err);
+                };
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <title>kvkit Form Login</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body class="view-login">
+
+        <div id="header">
+
+        <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+            <ul class="topNav">
+                <a class="active" href="/admin/login">Login</a>
+            </ul>
+
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <h2>kvkit Form Login</h2>
+            <p>Enter your Splunk username and password.</p>
+            <div class="col-md-7">
+                <form action="/form/login" method="POST">
+                    <div class="form-row">
+                        <div class="col">
+                            <div for="username" class="label">
+                                <i class="fas fa-user red"></i> Username</div>
+                            <input required name="username" id="username" class="form-control form-control" />
+                        </div>
+                        <div class="col">
+                            <div for="password" class="label"><i class="fas fa-lock red"></i> Password</div>
+                            <input required type="password" name="password" id="password" class="form-control form-control" />
+                        </div>
+                        <div class="col">
+                            <button class="primaryButton" type="submit">Login</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

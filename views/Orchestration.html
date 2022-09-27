@@ -1,0 +1,253 @@
+<html>
+    <head>
+        <title>kvkit - Remote KV Store Jobs</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>    </head>
+    <body class="page-orchestrate">
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config" class="appconfig"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav primary">
+                    <a class="apphome" href='/'><i class="fas fa-home"></i> KV</a>
+                    <a class="active apphome" href='/orchestration'><i class="fas fa-exchange-alt"></i> Remote Jobs</a>
+                </ul>
+            </div>
+
+
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <h2><strong>Remote KV Store Jobs</strong></h2>
+            <p><a class="secondaryButton" href="/orchestration/add">Add Environment</a></p>
+
+            <h2>&#10112; Select Environment/KV Stores</h2>
+            <p>The first environment field you select is marked as the job source (copy from). Other selected environments become the destination (copy to).</p>
+
+            <div class="row">
+                ${hosts.map(host => `
+                    <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3"> 
+                        <h3><i class="fas fa-server"></i> ${host.hostname} ${hosts.indexOf(host) !== 0 ? `<i class="fas fa-trash" style="cursor:pointer;color:red;" onclick="deleteHost('${host.hostname}')"></i>` : ''}</h3>
+                        <select id='${host.hostname}' class="form-control form-control-sm">
+                            <option selected>Choose a Collection</option>
+                            ${Object.keys(host.apps).map(app => `
+                                ${Object.keys(host.apps[app]).map(collection => `
+                                    <option id='${host.hostname}-${app}-${collection}'>${app}/${collection}</option>
+                                `).join('')}
+                            `).join('')}
+                        </select>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="actions">
+		<h2 style="margin-top: 20px;">&#10113; Schedule Job</h2>
+		<p>Enter the desired job schedule in crontab format. Leave this field blank to run the job immediately.</p>
+
+		<input style="width: 200px; clear:both; " class="form-control form-control-sm" id="cronFormat" placeholder="enter crontab schedule" value="" />
+
+		<h2>&#10114; Submit Job</h2>
+		<p>Select an operation to execute or schedule.</p>
+        <button class="primaryButton" onclick="merge()" style="display:none;">Merge</button>
+        <button class="primaryButton" onclick="append()">Append</button>
+        <button class="primaryButton" onclick="overwrite()">Overwrite</button><br />
+                <a onclick="resetJob()" style="margin-top: 5px; margin-right: 3px; display: inline-block;cursor: pointer; color: #e82e2e; text-decoration: underline;">Reset Job</a>                  <input type="checkbox" id="keepKey" /> Preserve <span class="fixedWidth">_key</span>
+
+            </div>
+
+	    <h2>Scheduled Remote Jobs</h2>
+        <p>The table below shows all scheduled jobs.</p>
+        <table id="data" class="table table-striped thead-dark">
+            <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Source</th>
+                    <th>Destination(s)</th>
+                    <th>Crontab Schedule</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.keys(jobs).length !== 0 ? `
+                    ${Object.values(jobs).map(job => `
+                        <tr>
+                            <td>${job.options.action}</td>
+                            <td>${job.options.src.replace(new RegExp('-','g'),'/')}</td>
+                            <td>${job.options.dst.join(' , ').replace(new RegExp('-','g'),'/')}</td>
+                            <td>${job.format}</td>
+                        <td><button class="primaryButton" onclick="removeJob('${job.job_id}')">Remove</button></td>
+                        </tr>
+                    `).join("")}
+                ` : `<tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>`}
+            </tbody>
+        </table>
+        </div>
+        <div id="footer">
+            <p class="subtle topborder">kvkit v1.2.0 (Pike) | <a href="http://docs.kvkit.com">docs.kvkit.com</a><br />
+            Copyright &copy; 2020 <a target="new" href="https://redfactorapps.com">RedFactor, LLC</a>. All rights reserved.        
+        </div>
+        <script>
+            var options = {
+                src:'',
+                dst:[],
+                action:'',
+                keepKey:false
+            };
+
+            function makeRequest() {
+                options.keepKey = $('#keepKey').prop('checked');
+
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/orchestration');
+                xhr.onreadystatechange = e => {
+                    if(xhr.readyState === 4 && xhr.status === 200) alert('Operation: ' + options.action + ' successful!');
+                    else if(xhr.readyState === 4 && xhr.status !== 200) alert('Operation: ' + options.action + ' unsuccessful! - Status Code' + xhr.status);
+                }
+
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send('options=' + JSON.stringify(options));
+            }
+
+            function merge() {
+                let format = $('#cronFormat').val();
+                options.action = 'merge';
+
+                if(format !== '') cronJob(format);
+                else makeRequest();            
+            }
+
+            function append() {
+                let format = $('#cronFormat').val();
+                options.action = 'append';
+
+                if(format !== '') cronJob(format);
+                else makeRequest();
+            }
+
+            function overwrite() {
+                let format = $('#cronFormat').val();
+                options.action = 'overwrite';
+
+                if(format !== '') cronJob(format);
+                else makeRequest();              
+            }
+
+            function updateDestinations() {
+                options.dst = [];
+
+                $('select').each((i,elem) => {
+                    if(!$(elem).prop('disabled')) {
+                        for(let option of $(elem).children().toArray()) {
+                            let collection = $(option);
+                            if(collection.prop('selected')) options.dst.push($(collection).attr('id'));
+                        }
+                    }
+                });
+
+                options.dst = options.dst.filter(dst => {return !(dst === null || dst === undefined)});
+            }
+
+            function resetJob() {
+                options = {
+                    src:'',
+                    dst:[],
+                    action:''
+                };
+
+                $('select').each((i,elem) => {
+                    $(elem).prop('multiple',false);
+                    $(elem).prop('disabled',false);
+                    $(elem).val('Choose a Collection');
+                    $(elem).css({border:'none'});
+                });
+
+                $('.src').remove();
+                $('.dst').remove();
+                $('#keepKey').prop('checked', false);
+                $('#cronFormat').val('');
+            }
+
+            function cronJob(format) {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/orchestration/cron');
+                xhr.onreadystatechange = e => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        alert('Job started successfully!');
+                        window.location.reload();
+                    } else if(xhr.readyState === 4 && xhr.status !== 200 ) alert('Illegal Cron format!');
+                }
+
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send('options=' + JSON.stringify(options) + '&format=' + format);
+            }
+
+            function deleteHost(hostname) {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/orchestration/delete/' + hostname);
+                xhr.onreadystatechange = e => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        alert('Deleted ' + hostname + ' successfully!');
+                        window.location.reload();
+                    } else if(xhr.readyState === 4 && xhr.status !== 200) alert('Host deletion unsuccessful! - Status Code' + xhr.status);
+                }
+
+                xhr.send(null);
+            }
+
+            function removeJob(id) {
+                let xhr = new XMLHttpRequest();
+
+                xhr.open('POST','/orchestration/job/remove');
+                xhr.onreadystatechange = e => {
+                    if(xhr.readyState === 4 && xhr.status === 200) {
+                        alert('Removed job ' + id + ' successfully!');
+                        window.location.reload();
+                    } else if(xhr.readyState === 4 && xhr.status !== 200) alert('Job deletion unsuccessfull! - Status Code' + xhr.status);
+                }
+
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send('id=' + id);
+            }
+
+            $('select').change(function() {
+                let elem = $(this);
+                let choice = elem.attr('id') + '-' + elem.val().toString().replace('/','-');
+
+                if(!options.src) {
+                    elem.css({border:'2px solid #000000'});
+                    elem.prop('disabled',true);
+                    elem.after($('<span class=src>').text("source"));
+
+                    $('select').prop('multiple',true);
+                    elem.prop('multiple',false);
+
+                    options.src = choice;
+                } else {
+                    updateDestinations();
+                    if(!elem.parent().text().includes('destination')) {
+                        elem.css({border:'2px solid #e82e2e'});
+                        elem.after($('<span class=dst>').text("destination"));
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>

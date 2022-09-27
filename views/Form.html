@@ -1,0 +1,194 @@
+<html>
+    <head>
+        <title>kvkit | ${app_name}/${kv_name} Form</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body class="page-shared-form-default";>
+
+        <div id="header">
+                <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+    
+                    <ul class="topNav secondary">
+                        <a href="javascript:history.go(-1);"><i class="fas fa-chevron-left"></i> Go Back</a>
+                        <a class="active apphome" href=''><i class="fas fa-paper-plane"></i> ${kv_name}</a>
+                    </ul>
+                </div>
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <div class="row">
+                <div class="col-md-5">
+                    <h2>Shared Form: ${kv_name}</h2>
+                    <p>Please complete the form below.</p>
+                    <div id='form'>
+                        ${Object.values(config).sort((a,b) => {return a.order - b.order}).map(field => `
+                            ${field.public === undefined ?
+                                `
+                                    ${field.static === false ? `
+                                        ${field.hidden === true ? `
+                                            <div class="field" style="display:none;">
+                                        ` : `<div class="field">`}
+                                            <div class="elem">
+                                                <div class="fieldName">${field.form_name}: <br /><span class="fieldDescription">${field.description}</span></div>
+                                                ${field.type === 'input' ? `<input class="form-control form-control-sm" type="text" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" value="${field.values}" />` : ``}
+                                                ${field.type === 'textarea' ? `<textarea class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">${field.values}</textarea>` : ``}
+                                                ${field.type === 'file' ? `<input class="form-control form-control-sm" type="file" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" accept="${field.values.split('|').join(',')}" />` : ``}
+                                                ${field.type === 'date' ? `<input class="form-control form-control-sm" type="date" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" value="${field.values}" />` : ``}
+
+                                                ${field.type === 'checkbox' ? `
+                                                    ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <input type="checkbox" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.values(val).join('').replace(val.class,'')}" class="${val.class}" /> <label class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</label><br />
+                                                            `).join("")
+                                                            }
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <input type="checkbox" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${val}" class="${Object.keys(config)[Object.values(config).indexOf(field)]}" /> <label for=${val}>${val}</label><br />
+                                                            `).join("")}
+                                                        `   
+                                                    }
+                                                ` : ``}
+
+                                                ${field.type === 'radio' ? `
+                                                    ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <input type="radio" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.values(val).join('').replace(val.class,'')}" class="${val.class}" /> <label class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</label><br />
+                                                            `).join("")
+                                                            }
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <input type="radio" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${val}" class="${Object.keys(config)[Object.values(config).indexOf(field)]}" /> <label>${val}</label><br />
+                                                            `).join("")}
+                                                        `   
+                                                    }
+                                                ` : ``}
+
+                                                ${field.type === 'dropdown' ? `
+
+                                                    <select class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">
+                                                        ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <option class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</option>
+                                                            `).join("")}
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <option class="${Object.keys(config)[Object.values(config).indexOf(field)]}">${val}</option>
+                                                            `).join("")}
+                                                        `}
+                                                    </select>
+
+                                                ` : ``}
+
+                                                ${field.type === 'multiselect' ? `
+
+                                                    <select multiple class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">
+                                                        ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <option class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</option>
+                                                            `).join("")}
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <option class="${Object.keys(config)[Object.values(config).indexOf(field)]}">${val}</option>
+                                                            `).join("")}
+                                                        `}
+                                                    </select>
+
+                                                ` : ``}
+                                            </div>
+                                        </div>
+                                        ` : ``}
+                                    `
+                            : ''}
+                        `).join("")}
+                        <button class="primaryButton" onclick="submit_form()">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let config = ${JSON.stringify(config)};
+
+            async function submit_form() {
+                let data = {};
+                let redirect = config.sharing ? config.sharing.redirect : '/submitted';
+                let can_submit = true;
+
+                delete config.sharing;
+                for(let field of Object.keys(config)) {
+                    let elem = $('[name="' + field + '"]');
+                    let fieldConfig = config[field];
+
+                    if(fieldConfig.static) {
+                        data[field] = fieldConfig.values;
+                    }
+                    else {
+                        if(fieldConfig.type === 'checkbox' || fieldConfig.type === 'radio') {
+                            data[field] = [];
+                            elem.each((i,chk) => {
+                                let text = chk.id;
+                                if(chk.checked) data[field].push(text);
+                            })
+                        } else if(fieldConfig.type === 'file') {
+                            data[field] = '';
+                            
+                            let file_input = document.getElementsByName(field)[0];
+                            let file = file_input.files[0];
+                            let rand_id = Math.random().toString(36).substr(2, 9);
+                            let reader = new FileReader();
+
+                            reader.onload = e => {
+                                let file_data = e.target.result;
+                                let xhr = new XMLHttpRequest();
+
+                                xhr.onreadystatechange = e => {
+                                    data[field] = '/${app_name}/${kv_name}/upload/' + rand_id + '-' + file.name;
+                                    if(xhr.status === 201 && xhr.readyState === 4) data[field] = file.name;
+                                }
+
+                                xhr.open('POST','/${app_name}/${kv_name}/upload/' + rand_id + '-' +  file.name);
+                                xhr.send(file_data); 
+                            }
+
+                            if(file) {
+                                reader.readAsBinaryString()
+                                data[field] = '[KVKIT_UPLOAD] /${app_name}/${kv_name}/upload/' + rand_id + '-' +  file.name;
+                            }
+                            
+                        } else {
+                            data[field] = elem.val();
+                        }
+                    }
+                }
+
+                for(let field in data) {
+                    if(data[field].length === 0 && config[field].required) {
+                        let elem = $('[name="' + field + '"]');
+                        elem.parent().css('border','2px solid red');
+                        can_submit = false;
+                    }
+                }
+
+                if(can_submit) {
+                    await new Promise((resolve,reject) => {
+                        let xhr = new XMLHttpRequest();
+                
+                        xhr.open('POST','/${app_name}/${kv_name}/addData');
+                        xhr.onreadystatechange = () => {
+                            if(xhr.readyState === 4 && xhr.status === 200) {
+                                resolve(xhr.response);
+                            }
+                        };
+                        xhr.send(JSON.stringify(data));
+                    });
+
+                    window.location.href = '/submitted/${app_name}/${kv_name}';
+                }
+            }
+        </script>
+    </body>
+</html>

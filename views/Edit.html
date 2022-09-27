@@ -1,0 +1,249 @@
+<html>
+    <head>
+        <title>kvkit | view ${app_name}/${kv_name}</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body>
+
+        <div id="header">
+
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav secondary">
+                    <a href='/'><i class="fas fa-home"></i> KV</a>
+                    <span class="subtle"><i class="fas fa-database"></i> <span class="gray">${app_name} /</span> <span class="active">${kv_name}</span></span>
+
+                </ul>
+            </div>
+
+            <ul class="topSubNav">
+                <a class='active' href='/app/${app_name}/${kv_name}'>Data</a>
+                <a href='/edit/config/${app_name}/${kv_name}'>Config</a>
+                <a href="/operations/${app_name}/${kv_name}">Operations</a>
+                <a href='/form/${app_name}/${kv_name}'>Form</a>
+            </ul>
+
+        </div>
+
+        <div id="content" style="scrollbar-width:none;">
+            <div class="row">
+                <div class="col-md-5">
+                    <h2 class="nopad"><strong>Edit Record</strong></h2>
+                    <p>Update single record in collection.</p>
+                    <div id='form'>
+                        ${Object.values(config).sort((a,b) => {return a.order - b.order}).map(field => `
+                            ${field.public === undefined ?
+                                `
+                                    ${field.static === false ? `
+                                        ${field.hidden === true ? `
+                                            <div class="field" style="display:none;">
+                                        ` : `<div class="field">`}
+                                            <div class="elem">
+                                                <div class="fieldName">${field.form_name}: <br /><span class="fieldDescription">${field.description}</span></div>
+                                                ${field.type === 'input' ? `<input class="form-control form-control-sm" type="text" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" value="${field.values}" />` : ``}
+                                                ${field.type === 'textarea' ? `<textarea class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">${field.values}</textarea>` : ``}
+                                                ${field.type === 'file' ? `<input class="form-control form-control-sm" type="file" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" accept="${field.values}" />` : ``}
+                                                ${field.type === 'date' ? `<input class="form-control form-control-sm" type="date" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}" value="${field.values}" />` : ``}
+
+                                                ${field.type === 'checkbox' ? `
+                                                    ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <input type="checkbox" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.values(val).join('').replace(val.class,'')}" class="${val.class}" /> <label class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</label><br />
+                                                            `).join("")
+                                                            }
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <input type="checkbox" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${val}" class="${Object.keys(config)[Object.values(config).indexOf(field)]}" /> <label for=${val}>${val}</label><br />
+                                                            `).join("")}
+                                                        `   
+                                                    }
+                                                ` : ``}
+
+                                                ${field.type === 'radio' ? `
+                                                    ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <input type="radio" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.values(val).join('').replace(val.class,'')}" class="${val.class}" /> <label class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</label><br />
+                                                            `).join("")
+                                                            }
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <input type="radio" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${val}" class="${Object.keys(config)[Object.values(config).indexOf(field)]}" /> <label>${val}</label><br />
+                                                            `).join("")}
+                                                        `   
+                                                    }
+                                                ` : ``}
+
+                                                ${field.type === 'dropdown' ? `
+
+                                                    <select class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">
+                                                        ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <option class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</option>
+                                                            `).join("")}
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <option class="${Object.keys(config)[Object.values(config).indexOf(field)]}">${val}</option>
+                                                            `).join("")}
+                                                        `}
+                                                    </select>
+
+                                                ` : ``}
+
+                                                ${field.type === 'multiselect' ? `
+
+                                                    <select multiple class="form-control form-control-sm" name="${Object.keys(config)[Object.values(config).indexOf(field)]}" id="${Object.keys(config)[Object.values(config).indexOf(field)]}">
+                                                        ${field.values instanceof Array ? `
+                                                            ${field.values.map(val => `
+                                                                <option class="${val.class}">${Object.values(val).join('').replace(val.class,'')}</option>
+                                                            `).join("")}
+                                                        ` : `
+                                                            ${field.values.split('|').map(val => `
+                                                                <option class="${Object.keys(config)[Object.values(config).indexOf(field)]}">${val}</option>
+                                                            `).join("")}
+                                                        `}
+                                                    </select>
+
+                                                ` : ``}
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        ` : ``}
+                                    `
+                            : ''}
+                        `).join("")}
+                        <button class="primaryButton" onclick="submit_form()">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let config = ${JSON.stringify(config)};
+
+            document.body.onload = async () => {
+               let data = JSON.parse(await new Promise((resolve,reject) => {
+                    let xhr = new XMLHttpRequest();
+            
+                    xhr.open('GET','/key/${app_name}/${kv_name}/${key}');
+                    xhr.onreadystatechange = () => {
+                        if(xhr.readyState === 4 && xhr.status === 200) {
+                            resolve(xhr.response);
+                        }
+                    };
+                    xhr.send(null);
+                }));
+
+                for(let chunk in data) {
+                    let elem = $('[name="' + chunk + '"]');
+                    let field = config[chunk];
+
+                    if(data[chunk] instanceof Array) {
+                        for(let val of data[chunk]) {
+                            data[chunk][data[chunk].indexOf(val)] = data[chunk][data[chunk].indexOf(val)].replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+                        }
+                    } else data[chunk] = data[chunk].replace(/&lt;/g,'<').replace(/&gt;/g,'>')
+
+                    elem.ready(() => {
+                        if(field !== undefined) {
+                            if(field.type === 'multiselect') elem.val(data[chunk].split(config ? config.sharing ? config.sharing.data_delimiter ? config.sharing.data_delimiter : ',' : ',' : ','));
+                            else if(field.type === 'checkbox' || field.type === 'radio') {
+                                if(data[chunk] instanceof Array) {
+                                    elem.each((i,chk) => {
+                                        for(let val of data[chunk]) {
+                                            if(val === chk.id) {
+                                                $(chk).prop('checked',true);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    elem.each((i,chk) => {
+                                        if(data[chunk].split(config ? config.sharing ? config.sharing.data_delimiter ? config.sharing.data_delimiter : ',' : ',' : ',').includes(chk.id)) {
+                                            $(chk).prop('checked',true);
+                                        }
+                                    });
+                                }
+                            } else elem.val(data[chunk]);
+                        }
+                    });
+                }
+            }
+
+            async function submit_form() {
+                let toSend = {};
+
+                delete config.sharing;
+                for(let field of Object.keys(config)) {
+                    let elem = $('[name="' + field + '"]');
+                    let fieldConfig = config[field];
+
+                    if(fieldConfig.static) toSend[field] = fieldConfig.values;
+                    else if(elem.val().length === 0 && fieldConfig.required) {
+                        elem.parent().addClass('required');
+                        elem.css('border','2px solid red');
+                        return
+                    } else {
+                        if(fieldConfig.type === 'checkbox' || fieldConfig.type === 'radio') {
+                            toSend[field] = [];
+                            elem.each((i,chk) => {if(chk.checked) toSend[field].push(chk.id)});
+                        } else if(fieldConfig.type === 'file') {
+                            data[field] = '';
+
+                            let file_input = document.getElementsByName(field)[0];
+                            let filenames = [];
+                            let rand_id = Math.random().toString(36).substr(2, 9);
+                            
+                            for(let file of file_input.files) {
+                                filenames.push(file.name);
+
+                                await new Promise((resolve,reject) => {
+                                    let reader = new FileReader();
+
+                                    reader.onload = async e => {
+                                        let file_data = e.target.result;
+                                        let xhr = new XMLHttpRequest();
+
+                                        xhr.open('POST','/${app_name}/${kv_name}/upload/' + rand_id + '-' +  file.name);
+                                        xhr.send(file_data); 
+
+                                        xhr.onreadystatechange = e => {
+                                            console.log(xhr.status)
+                                            if(xhr.status === 201 && xhr.readyState === 4) resolve(true);
+                                        }
+                                    }
+
+                                    reader.readAsArrayBuffer(file);
+                                });
+
+                                data[field] = filenames.join(',');
+                            }
+
+                            toSend[field] = '/data/${app_name}/${kv_name}/' + rand_id + '-' + filenames.join(',');
+                        } else toSend[field] = elem.val();
+                    }
+                }
+
+                await new Promise((resolve,reject) => {
+                    let xhr = new XMLHttpRequest();
+            
+                    xhr.open('POST','/key/${app_name}/${kv_name}/${key}');
+                    xhr.onreadystatechange = () => {
+                        if(xhr.readyState === 4 && xhr.status === 200) resolve(xhr.response);
+                    };
+                    xhr.send(JSON.stringify(toSend));
+                });
+
+                window.location.href = '/app/${app_name}/${kv_name}';
+            }
+        </script>
+    </body>
+</html>

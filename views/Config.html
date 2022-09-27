@@ -1,0 +1,285 @@
+<html>
+    <head>
+        <title>kvkit | configure ${app_name}/${kv_name}</title>
+        <script language="javascript" src="/jquery/jquery.js"></script>
+        <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="/fa/css/all.css"/>
+        <link rel='stylesheet' type='text/css' href='/static/css/kvkit.css'/>
+    </head>
+    <body>
+
+        <div id="header">
+            <ul class="globalNav">
+                <span class="white"><a href="/admin/config" id="config"><i class="fas fa-cog"></i> App Configuration</a></span>
+                <span class="white"><a target="new" href="http://docs.kvkit.com" id="config"><i class="fas fa-question-circle"></i> Help</a></span>
+                <span class="white"><a href="/admin/logout" id="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </ul>
+
+            <a href="/"><img src="/static/img/kvkit_black.png" class="logo" /></a>
+
+                <ul class="topNav secondary">
+                    <a href='/'><i class="fas fa-home"></i> KV</a>
+                    <span class="subtle"><i class="fas fa-database"></i> <span class="gray">${app_name} /</span> <span class="active">${kv_name}</span></span>
+
+                </ul>
+            </div>
+
+            <ul class="topSubNav">
+                <a href='/app/${app_name}/${kv_name}'>Data</a>
+                <a class='active' href='/edit/config/${app_name}/${kv_name}'>Config</a>
+                <a href="/operations/${app_name}/${kv_name}">Operations</a>
+                <a href='/form/${app_name}/${kv_name}'>Form</a>
+            </ul>
+
+        </div>
+
+        <div id="content">
+            <div class="row">
+                <div class="col-md-5">
+
+            <h2 class="nopad"><strong>Form Config</strong></h2>
+            <p>Configure your form field configuation, sharing preferences, and design.</p>
+
+            <h2>Fields</h2>
+            <hr />
+            <form id='form' action='/${app_name}/${kv_name}/setConfig' method='POST'>
+
+            ${config !== undefined ? `
+                ${fields.map(field => `
+                    <div class="fieldName"><strong>${field}:</strong></div><br/>
+                    Order: <input class='form-control form-control-sm padBottom' type='text' name='${field}.order' id='${field}.order' value="${config[field].order !== field ? config[field].order : field}">
+                    Display: <input class='form-control form-control-sm padBottom' type='text' name='${field}.form_name' id='${field}.form_name' value="${config[field].form_name !== field ? config[field].form_name : field}">
+                    Description: <input class='form-control form-control-sm padBottom' type='text' name='${field}.description' id='${field}.description' value="${config[field].description !== field ? config[field].description : field}">
+                    Type: <select class='form-control form-control-sm padBottom' name='${field}.type' id='${field}.type'>
+                            ${config[field].type === 'input' ? '<option selected>input</option>' : '<option>input</option>'}
+                            ${config[field].type === 'textarea' ? '<option selected>textarea</option>' : '<option>textarea</option>'}
+                            ${config[field].type === 'checkbox' ? '<option selected>checkbox</option>' : '<option>checkbox</option>'}
+                            ${config[field].type === 'radio' ? '<option selected>radio</option>' : '<option>radio</option>'}
+                            ${config[field].type === 'dropdown' ? '<option selected>dropdown</option>' : '<option>dropdown</option>'}
+                            ${config[field].type === 'multiselect' ? '<option selected>multiselect</option>' : '<option>multiselect</option>'}
+                            ${config[field].type === 'file' ? '<option selected>file</option>' : '<option>file</option>'}
+                            ${config[field].type === 'date' ? '<option selected>date</option>' : '<option>date</option>'}
+                          </select>
+                    Values: <input class='form-control form-control-sm padBottom' type='text' name='${field}.values' id='${field}.values' placeholder="Static Value, CSVs, or a Splunk Search" value='${config[field].values}' />
+                    <br />
+                    ${config[field].hidden ? `<input type='checkbox' name='${field}.hidden' id='${field}.hidden' checked> Hidden` : `<input type='checkbox' name='${field}.hidden' id='${field}.hidden'> Hidden`}
+                    ${config[field].static ? `<input type='checkbox' name='${field}.static' id='${field}.static' checked> Static` : `<input type='checkbox' name='${field}.static' id='${field}.static'> Static`}
+                    ${config[field].required ? `<input type='checkbox' name='${field}.required' id='${field}.required' checked> Required` : `<input type='checkbox' name='${field}.required' id='${field}.required'> Required`}
+                    <hr/>
+                `).join('')}
+
+                <h2 class="nopad">Sharing</h2>
+                <p>Optionally share the form and collected data with your user community. If you choose not to share, the form will only be accessible to kvkit admins via the <a href="https://demo.redfactorapps.com:8008/edit/add/${app_name}/${kv_name}">Form</a> link.</p>                
+
+                <h3>Form Sharing Configuration</h3>
+                <p>Shared Form URL: <a href='/form/${app_name}/${kv_name}'>https://${site}/form/${app_name}/${kv_name}</a></p>
+
+                ${config.sharing.public ? `<input type='checkbox' name='sharing.public' id='sharing.public' checked>` : `<input type='checkbox' name='sharing.public' id='sharing.public'>`} <strong><i class="fas fa-lock-open gray"></i> Open:</strong> Enable unauthenticated access to this form<br/>
+                ${config.sharing.private ? `<input type='checkbox' name='sharing.private' id='sharing.private' checked>` : `<input type='checkbox' name='sharing.private' id='sharing.private'>`} <strong><i class="fas fa-lock gray"></i> &nbsp;Restricted:</strong> Enable access to this form based on Splunk role<br/><br />
+
+                <div id='roles'>
+                    Select Splunk Role(s):
+                    <br/>
+                    <select multiple name='sharing.roles' id='sharing.roles' class="form-control form-control-sm roles">
+                        ${roles.map(role => `
+                            ${config.sharing.roles.includes(role) ? `<option selected>${role}</option>` : `<option>${role}</option>`}
+                        `).join("")}
+                    </select>
+                </div>
+                ${config.sharing.splunk_search_user_auth ? `<input type='checkbox' name='sharing.splunk_search_user_auth' id='sharing.splunk_search_user_auth' checked>` : `<input type='checkbox' name='sharing.splunk_search_user_auth' id='sharing.splunk_search_user_auth'>`} <strong><i class="fas fa-user gray"></i> &nbsp;User-Authenticated Searches:</strong> Use the form user's authentication for Splunk searches<br/><br />
+
+                <h3>Data Sharing Configuration</h3>
+                <p>Shared Data URL: <a href="/public/app/${app_name}/${kv_name}">https://${site}/public/app/${app_name}/${kv_name}</a></p>
+
+                ${config.sharing.public_view ? `<input type="checkbox" name="sharing.public_view" id="sharing.public_view" checked/>` : `<input type="checkbox" name="sharing.public_view" id="sharing.public_view" />`} <strong>Public</strong> Allow unauthenticated access to collected data
+                <hr />
+                <h2 class="nopad">Template</h2>
+                <p>Select a form template to stylize your form.</p>
+
+                Public Template: 
+                <select class="form-control form-control-sm" name="sharing.public_form_template" id="sharing.public_form_template">
+                    <option selected>${config.sharing.public_form_template !== undefined && config.sharing.public_form_template !== '' ? config.sharing.public_form_template : "Choose a Template"}</option>
+                    ${form_templates.map(template => `
+                        <option>${template}</option>
+                    `).join("")}
+                </select>
+
+                Private Template: 
+                <select class="form-control form-control-sm" name="sharing.private_form_template" id="sharing.private_form_template">
+                    <option selected>${config.sharing.private_form_template !== undefined && config.sharing.private_form_template !== '' ? config.sharing.private_form_template : "Choose a Template"}</option>
+                    ${form_templates.map(template => `
+                        <option>${template}</option>
+                    `).join("")}
+                </select>
+            ` : ` <!-- IF COLLECTION HAS NO CONFIG RENDER BELOW-->
+            ${fields.map(field => `
+                <div class="fieldName"><strong>${field}:</strong></div><br/>
+                Order: <input class='form-control form-control-sm padBottom' type='text' name='${field}.order' id='${field}.order' value="${fields.indexOf(field)+1}">
+                Display: <input class='form-control form-control-sm' type='text' name='${field}.form_name' id='${field}.form_name' value="${field}">
+                Description: <input class='form-control form-control-sm' type='text' name='${field}.description' id='${field}.description' placeholder="Description of Field" value="">
+                Type: <select class='form-control form-control-sm' name='${field}.type' id='${field}.type'>
+                        <option>input</option>
+                        <option>textarea</option>
+                        <option>checkbox</option>
+                        <option>radio</option>
+                        <option>dropdown</option>
+                        <option>multiselect</option>
+                        <option>file</option>
+                        <option>date</option>
+                      </select>
+                Values: <input class='form-control form-control-sm' type='text' name='${field}.values' id='${field}.values' placeholder="Static Value, CSVs, or a Splunk Search" />
+                <br />
+                <input type='checkbox' name='${field}.hidden' id='${field}.hidden'> Hidden
+                <input type='checkbox' name='${field}.static' id='${field}.static'> Static
+                <input type='checkbox' name='${field}.required' id='${field}.required'> Required
+                <hr/>
+            `).join('')}
+
+            <h2 class="nopad">Sharing</h2>
+            <p>Optionally share the form and collected data with your user community. If you choose not to share, the form will only be accessible to kvkit admins via the <a href="https://demo.redfactorapps.com:8008/edit/add/${app_name}/${kv_name}">Form</a> link.</p>
+
+
+            <h3>Form Sharing Configuration</h3>
+            <p>Shared Form URL: <a href='/form/${app_name}/${kv_name}'>https://${site}/form/${app_name}/${kv_name}</a></p>
+
+            <input type='checkbox' name='sharing.public' id='sharing.public'> <strong><i class="fas fa-lock-open gray"></i> Open:</strong> Enable unauthenticated access to this form <br/>
+            <input type='checkbox' name='sharing.public' id='sharing.private'> <strong><i class="fas fa-lock gray"></i> &nbsp;Restricted:</strong> Enable access to this form based on Splunk role<br/><br />
+            <div id='roles'>
+                Select Splunk Role(s):
+                <br/>
+                <select class="form-control form-control-sm" multiple name='sharing.roles' id='sharing.roles'>
+                    ${roles.map(role => `
+                        <option>${role}</option>
+                    `).join("")}
+                </select>
+            </div>
+            <input type='checkbox' name='sharing.splunk_search_user_auth' id='sharing.splunk_search_user_auth'> <strong><i class="fas fa-user gray"></i> &nbsp;User-Authenticated Searches:</strong> Use user authentication for Splunk searches<br/><br />
+
+            <br />
+            <h3>Data Sharing Configuration</h3>
+            <p>Shared Data URL: <a href="/public/app/${app_name}/${kv_name}">https://${site}/public/app/${app_name}/${kv_name}</a></p>
+
+            <input type="checkbox" name="sharing.public_view" id="sharing.public_view" /> <strong><i class="fas fa-lock-open gray"></i> Open:</strong> Allow unauthenticated access to collected data 
+            <hr />
+            <h2 class="nopad">Template</h2>
+            <p>Select a form template to stylize your form.</p>
+
+            Public:
+            <select class="form-control form-control-sm" name="sharing.public_form_template" id="sharing.public_form_template">
+                <option disabled selected>Choose a Template</option>
+                ${form_templates.map(template => `
+                    <option>${template}</option>
+                `).join("")}
+            </select>
+
+            Private:
+            <select class="form-control form-control-sm" name="sharing.private_form_template" id="sharing.private_form_template">
+                <option disabled selected>Choose a Template</option>
+                ${form_templates.map(template => `
+                    <option>${template}</option>
+                `).join("")}
+            </select>
+            `}
+            <hr />
+            <h2 class="nopad">Email Notifications</h2>
+            <strong>Email Recipients:</strong>
+            <br />Comma-separated list of email addresses to receive the form submission.
+            <input type='text' name='sharing.email_list' class="form-control form-control-sm" id='sharing.email_list' placeholder="" value="${config ? config.sharing ? config.sharing.email_list : '' : ''}">
+            <br />
+            <strong>Email Body:</strong>
+            <br />Content of the form submission email notification. Submitted field values are available as <span class="fixedWidth">!{field_name}</span>
+            <textarea type='text' name='sharing.email_msg' class="form-control form-control-sm" id='sharing.email_msg' placeholder="">${config ? config.sharing ? config.sharing.email_msg : '' : ''}</textarea>
+            <br />
+
+            <span class="padTop noPadBottom"><input type="checkbox" name="sharing.email_submitter" id="sharing.email_submitter" /> Send confirmation email</span>
+            <br /><br />
+            <strong>Confirmation Email Body:</strong>
+            <br />Content of the confirmation email that is sent to the email address provided in the <span class="fixedWidth">email</span> field of your form. Submitted field values are available as <span class="fixedWidth">!{field_name}</span>
+            <textarea type='text' name='sharing.submitter_msg' class="form-control form-control-sm" id='sharing.submitter_msg' placeholder="">${config ? config.sharing ? config.sharing.submitter_msg : '' : ''}</textarea>
+            <hr />
+            <h2 class="nopad">Other Options</h2>
+            <br />
+            <!-- <strong>Import Config:</strong>
+            <br />
+            Import a form config to use for this form
+            <br />
+            <input name="config" type="file" accept=".json" id="upload_config" />
+            <br /> -->
+            <strong>Data Delimiter:</strong>
+            <br />
+            The delimiter to be used when writing form contents to KV Store.
+            <input name="sharing.data_delimiter" class="form-control form-control-sm" id='sharing.data_delimiter' value="${config ? config.sharing ? config.sharing.data_delimiter ? config.sharing.data_delimiter : ',' : ',' : ','}" />
+            <br />
+            <strong>Confirmation Page:</strong>
+            <br />
+            The URL that the user is redirected to following form submission. Submitted field variables are availabile in the URI for use outside kvkit.
+            <br />
+            <select class="form-control form-control-sm" name="sharing.submission_template" id="sharing.submission_template" required>
+                <option selected>${config ? config.sharing ? config.sharing.submission_template !== undefined && config.sharing.submission_template !== '' ? config.sharing.submission_template : "Choose a Template" : "Choose a Template" : "Choose a Template"}</option>
+                ${submission_templates.map(template => `
+                    <option>${template}</option>
+                `).join("")}
+            </select>
+            <br />
+            <strong>Post Process Search:</strong>
+            <br />
+            The Splunk search to run in the background after data is written to the KV Store. Submitted field values are available as <span class="fixedWidth">!{field_name}</span>
+            <textarea type='text' name='sharing.post_process_search' class="form-control form-control-sm" id='sharing.post_process_search' placeholder="">${config ? config.sharing ? config.sharing.post_process_search.replace(/\"/g,'&quot;') : '' : ''}</textarea>
+            <br />
+
+            <button class="primaryButton" type='submit' style="margin-bottom: 50px;">Save Configuration</button>
+        </form>
+        </div>
+        </div>
+        </div>
+        
+        <script>
+            document.body.onload = () => {
+                document.getElementById('roles').style.display = 'none';
+                if(document.getElementById('sharing.private').checked) document.getElementById('roles').style.display = 'block';
+
+                document.getElementById('sharing.public').onchange = () => {
+                    document.getElementById('sharing.private').checked = false;
+                    document.getElementById('sharing.splunk_search_user_auth').checked = false;
+                    document.getElementById('roles').style.display = 'none';
+                }
+
+                document.getElementById('sharing.splunk_search_user_auth').onchange = () => {
+                    if(document.getElementById('sharing.public').checked) document.getElementById('sharing.splunk_search_user_auth').checked = false;
+                }
+
+                document.getElementById('sharing.private').onchange = () => {
+                    document.getElementById('sharing.public').checked = false;
+                    if(!document.getElementById('sharing.private').checked) {
+                        document.getElementById('roles').style.display = 'none';
+                        document.getElementById('sharing.splunk_search_user_auth').checked = false;
+                    }
+                    else document.getElementById('roles').style.display = 'block';
+                };
+
+                // document.getElementById('upload_config').onchange = function() {
+                //     let file_input = document.getElementById('upload_config');
+                //     let file = file_input.files[0];
+                //     let reader = new FileReader();
+
+                //     reader.onload = e => {
+                //         let file_data = e.target.result;
+                //         let xhr = new XMLHttpRequest();
+
+                //         xhr.onreadystatechange = e => {
+                //             if(xhr.status === 200 && xhr.readyState === 4) window.location.href = '/edit/config/${app_name}/${kv_name}';
+                //         }
+
+                //         xhr.open('POST','/${app_name}/${kv_name}/setConfig');
+                //         xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                //         xhr.send('config=' + file_data); 
+                //     }
+
+                //     if(file) reader.readAsText(file);
+                //     else console.log('tset')
+                // }
+            }
+        </script>
+    </body>
+</html>

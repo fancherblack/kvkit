@@ -1,0 +1,607 @@
+/*************************
+*
+* kvkit Primary Stylesheet
+*
+*************************/
+
+/*
+** GLOBAL
+*/
+
+body {
+	background-color: #efefef;
+	font-family: 'open-sans', sans-serif;
+    color: #191919;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 100;
+}
+
+#content, #app {
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
+    margin-bottom: 50px;
+    /* overflow: scroll; */
+}
+
+.page-apphome #content,.page-orchestrate #content {
+    padding-top: 20px;
+}
+
+p {
+	font-size: 1.11em;
+}
+
+strong {
+    font-weight: 900;
+    color: #555;
+}
+
+p.subtle {
+    color: #555;
+    font-size: .88em;
+    font-weight: 700;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    padding-top: 20px;
+}
+
+.subtle {
+    color: #555;
+    font-size: .88em;
+    font-weight: 700;
+}
+
+a {
+    color: #e82e2e;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #e82e2e;
+}
+
+#content a:hover {
+    text-decoration: underline;
+}
+
+.red {
+	color: #e82e2e;
+}
+
+.white {
+    color: #fff;
+}
+
+.gray {
+    color: #999;
+}
+
+.tiny {
+    font-size: .77em;
+}
+
+u {
+    text-decoration: underline !important;
+}
+
+.fixedWidth {
+    font-family: monospace,'Courier New', Courier;
+}
+
+h1, .h1 {
+    font-weight: 100;
+    color: #555;
+    font-size: 2.25em;
+    margin-top: 33px;
+}
+
+h1.noTopPad {
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+h2, .h2 {
+    font-weight: 100;
+    color: #555;
+    margin-top: 33px;
+    font-size: 1.75em;
+}
+
+h2.nopad {
+    margin-top: 0;
+}
+
+h3, .h3 {
+    font-weight: 900;
+    color: #555;
+    font-size: 1.25em;
+}
+
+/* Header & Nav */
+
+#header {
+    background-color: #000000;
+    height: 144px;
+    width: 100%;
+}
+
+#headerPublic {
+    background-color: #000000;
+    height: 107px;
+    width: 100%;
+}
+
+.logo {
+    width: 144px;
+    height: auto;
+    padding-left: 20px;
+    padding-top: 40px;
+}
+
+.globalNav {
+    position: absolute;
+    top: 131px;
+    right: 20px;
+    padding: 0;
+    z-index: 5;
+}
+
+.globalNav a {
+	display: inline-block;
+	text-align: center;
+	padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 1.5px;
+	padding-bottom: 1.5px;
+    margin: 0;
+    font-size: .88em;
+    font-weight: 100;
+    color: #efefef;
+    text-decoration: none;
+}
+
+.globalNav a.active, .globalNav a:hover {
+	color: #e82e2e;
+
+}
+
+.topNav {
+	position: absolute;
+	padding: 0;
+	background-color: #191919;
+	border: none;
+	width: 100%;
+    margin-top: 51px; 
+}
+
+.topNav.secondary {
+    background-color: #191919;
+}
+
+.topNav.secondary a {
+    border-right: none;
+}
+
+.topNav.secondary a:hover {
+    background-color: #191919;
+    color: #e82e2e;
+}
+
+.topNav a {
+	display: inline-block;
+	text-align: center;
+	padding: 15.5px 20px;
+    margin: 0;
+    margin-left: -4.4px;
+    font-size: .9em;
+    min-width: 107px;
+    font-weight: 900;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.topNav a.white.active {
+    color: #191919;
+    background-color: #efefef;
+}
+
+.topNav a:hover {
+    color: #191919;
+    background-color: #efefef;
+}
+
+.topSubNav {
+	position: relative;
+	padding: 0;
+	background-color: #191919;
+	border: none;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px; 
+}
+
+.topSubNav a {
+	display: inline-block;
+	text-align: center;
+	padding: 7.5px 10px;
+    margin: 0;
+    margin-left: -4.4px;
+    font-size: .9em;
+    min-width: 107px;
+    font-weight: 900;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.topSubNav a.active, .topNav a.active {
+    color: #e82e2e;
+    background-color: #efefef;
+}
+
+.topSubNav a:hover {
+    color: #e82e2e;
+    background-color: #efefef;
+}
+
+.appconfig.active {
+    color: #efefef !important;
+    background-color: #333;
+    border: 1px solid #555;
+}
+
+.topNav a.active.apphome {
+    background-color: #efefef;
+}
+
+/* Footer */
+
+#footer {
+        margin-left: 20px;
+        padding-bottom: 20px;
+}
+
+#footer p {
+    margin-top: 0;
+    padding-top: 0;
+    font-weight: 100;
+}
+
+#footer hr {
+    border-top: 1px solid #ccc;
+    width: 19px;
+    text-align: left;
+    margin-left: 0;
+    padding-bottom: 0;
+    margin-bottom: 5px;
+}
+
+/* Tables */
+
+table {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+tr, th, td {
+	text-align: left;
+}
+
+td.actionColumn {
+    border: none !important;
+}
+
+.page-collection th:last-child {
+    opacity: 0;
+}
+
+.page-collection td:last-child {
+}
+
+.shim {
+    display: block;
+    height: 3px;
+}
+
+/* Forms */
+
+#form {
+	margin-top: 20px;
+}
+
+.label {
+	font-size: 1.2em;
+	font-weight: 100;
+}
+
+input[type=text] {
+	font-size: 1.2em !important;
+	font-weight: 100 !important;
+}
+
+.roles {
+    margin-bottom: 20px;
+}
+
+.padBottom {
+    margin-bottom: 10px;
+}
+
+.padBigBottom {
+    margin-bottom: 33px;
+}
+
+.blockify {
+    display: block;
+}
+
+input[type=text], input[type=radio], input[type=file], input[type=date], select, textarea {
+    margin-bottom: 15px;
+}
+
+input[type=checkbox] {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.fieldName {
+    font-size: 1.2em;
+    font-weight: bolder;
+}
+
+.fieldDescription {
+    display: inline-block;
+    font-size: .77em;
+    padding-bottom: 5px;
+    }
+
+/* Buttons */
+
+.primaryButton {
+    background: #ededed;
+    padding: 10px 10px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    border-radius: .3rem;
+}
+
+.paginate_button, a.page-link {
+    background: #ededed;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    border-radius: .3rem;
+    border: #ccc;
+    color: #e82e2e;
+}
+
+a.page-link:hover {
+    background-color: #e82e2e;
+    color: #efefef;
+    text-decoration: none;
+}
+
+li.active a.page-link {
+    background-color: #e82e2e !important;
+    color: #efefef;
+}
+
+.btn-file.primaryButton {
+    background: #ededed;
+    padding: 8px 8px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    border-radius: .3rem;
+    color: #e82e2e;
+}
+
+.primaryButton.topPad {
+	margin-top: 20px;
+}
+
+.primaryButton:hover {
+    background: #e82e2e;
+    border: 1px solid #e82e2e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.secondaryButton {
+    background: #ededed;
+    padding: 7.5px 10px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #e82e2e;
+    font-size: .65em;
+    margin-right: 3.3px;
+    border-radius:.1rem
+}
+
+.secondaryButton:hover {
+    background: #e82e2e;
+    border: 1px solid #e82e2e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.destructiveButton {
+    background: #ededed;
+    padding: 7.5px 10px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #e82e2e;
+    font-size: .65em;
+    margin-right: 3.3px;
+    border-radius:.1rem;
+    background: #e82e2e;
+    border: 1px solid #e82e2e;
+    color: #fff;
+    text-decoration: none;
+}
+
+.importButtonWrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.importButton {
+    display: block;
+    background: #ededed;
+    padding: 10px 10px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: #e82e2e;
+}
+
+.importButtonWrapper input[type=file] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+
+.addCollection {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    font-size: 17.5px;
+}
+
+.addCollection:hover {
+    color: #555;
+}
+
+.textButton {
+    text-decoration: none;
+    color: #e82e2e;
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    margin-left: 5px;
+}
+
+.textButton:hover {
+    text-decoration: underline !important;
+}
+
+/*
+** VIEW SPECIFIC
+*/
+
+/* App Home */
+
+.box {
+    display: inline-block;
+    background-size: cover;
+    background-position: center;
+    background-color: #ddd;
+    min-height: 200px;
+    border: 1px solid #efefef;
+    padding-bottom: 30px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+
+.box:hover {
+    border: 1px solid #ddd;
+}
+
+.collectionList {
+    display: inline-block;
+    font-size: 1.1em;
+    background-color: #777;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border: 1px solid #999;
+    margin-bottom: 2px;
+}
+
+a.collectionlist {
+    color: #fff;
+}
+
+a.collectionList:hover {
+    text-decoration: none !important;
+    background-color: #e82e2e;
+    border: 1px solid #e82e2e;
+}
+
+/* Login */
+
+.view-login .form-row {
+	position: relative;
+}
+
+.view-login .form-row .primaryButton {
+	position: absolute;
+    bottom: 0;
+}
+
+.view-login input#password, .view-login input#username {
+	height: 40px;
+}
+
+.view-login .form-row {
+	margin-left: -20px;
+}
+
+/* Collections */
+
+.page-collection #backups {
+    margin-bottom: 55px;
+}
+
+.page-shared-form-default  .topNav.secondary a:hover {
+    background-color: #efefef;
+    color: #e82e2e;
+}
+
+/* Remote Jobs (Orchestrate) */
+
+.src {
+    display: inline-block;
+    margin-top: -5px;
+    font-size: 9.5px;
+    background: #000000;
+    color: #ffffff;
+    padding-left: 3.5px;
+    padding-right: 3.5px;
+    padding-top: 1.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 0;
+}
+
+.dst {
+    display: inline-block;
+    margin-top: -5px;
+    font-size: 9.5px;
+    background: #e82e2e;
+    color: #ffffff;
+    padding-left: 3.5px;
+    padding-right: 3.5px;
+    padding-top: 1.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 0;
+}
