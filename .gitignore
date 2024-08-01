@@ -1,12 +1,11 @@
-node_modules/*
-node_modules
-.vs/
-data/*
-cert/*
-package-lock.json
-config/credentials.json
-config/forms.json
-config/hosts.json
-config/jobs.json
-config/splunk.json
-config/ssl.json
+# ide stuff
+/.vscode/
+/.idea/
+
+# build/dependency stuff
+/node_modules/
+
+# common data paths
+/data/*
+/cert/*
+/config/*.json

@@ -1,10 +1,8 @@
 const HttpsProxyAgent = require('https-proxy-agent');
-const {createHash,randomBytes} = require('crypto');
+const { randomBytes } = require('crypto');
 const cron = require('node-cron');
 const https = require('https');
-const _ = require('lodash');
 const fs = require('fs');
-const ip = require('ip');
 
 // Required for self signed certificates that Splunk uses, can remove if Splunk certificates are signed
 // NOTE: Still Secure! All requests are still used with HTTPS & TLS
@@ -301,19 +299,14 @@ var kvkit = {
     randomString(length) {
         return randomBytes(length/2).toString('hex');
     },
-    hash(string,type='sha512') {
-        let hash = createHash(type);
-        hash.update(string);
-        return hash.digest('hex');
-    },
-    getInstanceHash() {
-        return this.hash(__dirname + '---' + ip.address());
-    },
     saveJobs() {
-        let safeJobs = _.cloneDeep(this.jobs);
+        const safeJobs = {};
 
-        for(let job in safeJobs) {
-            safeJobs[job].cron = null;
+        for(const key in this.jobs) {
+            safeJobs[key] = {
+                ...this.jobs[key],
+                cron: undefined,
+            };
         }
 
         fs.writeFileSync(__dirname + '/config/jobs.json',JSON.stringify(safeJobs,null,4));
