@@ -15,15 +15,9 @@
     "express-session": "^1.17.1",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
-    "ip": "^1.1.5",
     "jquery": "^3.5.0",
-    "lodash": "^4.17.20",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.10",
-    "nvm": "0.0.4",
     "querystring": "^0.2.0"
-  },
-  "devDependencies": {
-    "javascript-obfuscator": "^2.12.0"
   }
 }

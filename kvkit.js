@@ -1,7 +1,6 @@
 const es6Renderer = require('express-es6-template-engine');
 const querystring = require('querystring');
 const session = require('express-session');
-const nodemailer = require('nodemailer');
 const kvkit = require('./kvkit_helpers');
 const express = require('express');
 const cron = require('node-cron');
@@ -1375,54 +1374,20 @@ app.use((err,req,res,next) => res.status(500).render('ServerError',{locals:{err}
 
 // Below checks license & starts the server...
 
-kvkit.readJson(__dirname + '/config/server.json').then(async data => {
-    kvkit.server.proxy = data.proxy;
-    kvkit.readJson(__dirname + '/config/license.json')
-        .then(given_license => {
-            kvkit.get({hostname:'riza.redfactorapps.com',port:443,path:'/license/redfactor/kvkit/' + given_license.key,auth:' '})
-                .then(async license => {
-                    license = JSON.parse(license);
+(async () => {
+    try {
+        await kvkit.load();
 
-                    if(license.uuid !== given_license.key || (license.expiration < new Date().getTime())) {
-                        console.log('[kvkit]: License Key Invalid! Renew at https://kvkit.com');
-                        process.exit(1);
-                    } else {
-                        kvkit.post({hostname:'riza.redfactorapps.com',port:443,path:'/instance/redfactor/kvkit/' + given_license.key,contentType:'application/x-www-form-urlencoded',data:'instanceHash=' + kvkit.getInstanceHash(),auth:' '})
-                            .then(async res => {
-                                if(res.statusCode === 200) {
-                                    await kvkit.load();
+        const server = https.createServer({
+            cert: fs.readFileSync(kvkit.ssl.cert),
+            key: fs.readFileSync(kvkit.ssl.key),
+            passphrase: kvkit.ssl.passphrase
+        }, app);
 
-                                    kvkit.server = data;
-                                    transporter = nodemailer.createTransport(kvkit.email);
-            
-                                    kvkit.log({
-                                        eventType:'kvkit App Started',
-                                        timestamp:new Date().toLocaleString()
-                                    });
-                                    
-                                    let server = https.createServer({cert:fs.readFileSync(kvkit.ssl.cert),key:fs.readFileSync(kvkit.ssl.key),passphrase:kvkit.ssl.passphrase},app);
-                                    server.listen(kvkit.server.port,kvkit.server.hostname,() => console.log(`\nkvkit started at\n\n - URL: https://${kvkit.server.hostname}:${kvkit.server.port}\n - PID: ${process.pid}\n`));            
-                                } else {
-                                    console.log('[kvkit]: License Key Invalid! Renew at https://kvkit.com');
-                                    process.exit(1);
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                console.log('[kvkit]: Error could not reach riza.redfactorapps.com');
-                                process.exit(1);
-                            })
-                        }
-                })
-                .catch(err => {
-                    console.log(err);
-                    console.log('[kvkit]: Error could not reach riza.redfactorapps.com');
-                    process.exit(1);
-                });
-        })
-        .catch(err => {
-            console.log(err);
-            console.log(`[kvkit]: Error could not read ${__dirname}/config/license.json`);
-            process.exit(1);
+        server.listen(kvkit.server.port, kvkit.server.hostname, () => {
+            console.log(`\nkvkit running\n\n - URL: https://${kvkit.server.hostname}:${kvkit.server.port}\n - PID: ${process.pid}\n`);
         });
-});
+    } catch (err) {
+        console.error('failed to start kvkit:', err);
+    }
+})();
