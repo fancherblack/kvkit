@@ -1,4 +1,4 @@
-# kvkit readme
+# kvkit
 
 kvkit is a tiny Express app that provides big Splunk KV store management capabilities **and** fancy Splunk-integrated web forms. 
 
