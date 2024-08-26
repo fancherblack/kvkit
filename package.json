@@ -3,21 +3,21 @@
   "version": "1.3.1",
   "description": "kvkit - KV-Store Toolkit",
   "main": "kvkit.js",
-  "author": "RedFactor, LLC",
-  "license": "kvkit Commercial License",
+  "author": "Fancher Black, LLC",
+  "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.13.0",
-    "bootstrap": "^4.4.1",
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "bootstrap": "^4.6.2",
     "cors": "^2.8.5",
-    "datatables.net-bs4": "^1.10.20",
-    "express": "^4.17.1",
-    "express-es6-template-engine": "^2.2.1",
-    "express-session": "^1.17.1",
+    "datatables.net-bs4": "^1.13.11",
+    "express": "^4.19.2",
+    "express-es6-template-engine": "^2.2.3",
+    "express-session": "^1.18.0",
     "https": "^1.0.0",
-    "https-proxy-agent": "^5.0.0",
-    "jquery": "^3.5.0",
+    "https-proxy-agent": "^5.0.1",
+    "jquery": "^3.7.1",
     "node-cron": "^2.0.3",
-    "nodemailer": "^6.4.10",
-    "querystring": "^0.2.0"
+    "nodemailer": "^6.9.14",
+    "querystring": "^0.2.1"
   }
 }

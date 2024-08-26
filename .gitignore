@@ -1,6 +1,11 @@
-# ide stuff
-/.vscode/
-/.idea/
+/package-lock.json
+
+# ignore hidden files and folders
+/**/.* 
+/**/.*/
+
+# except for this file
+!/.gitignore
 
 # build/dependency stuff
 /node_modules/
