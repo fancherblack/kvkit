@@ -1,0 +1,14 @@
+{
+    "excluded_roles": [
+        "admin",
+        "can_delete",
+        "power"
+    ],
+    "excluded_kvstores": [
+        ""
+    ],
+    "excluded_apps": [
+        ""
+    ],
+    "max_search_time": 60
+}

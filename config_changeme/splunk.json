@@ -1,0 +1,6 @@
+{
+    "hostname": "",
+    "logging_hostname": "",
+    "rest_port": 8089,
+    "hec_port": 8088
+}
