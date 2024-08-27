@@ -1,8 +1,12 @@
 # kvkit
 
-kvkit is a tiny Express app that provides big Splunk KV store management capabilities **and** fancy Splunk-integrated web forms. 
+kvkit is a tiny Express app that provides big Splunk KV Store management capabilities **and** fancy Splunk-integrated web forms. The following videos should give you a good overview of the application's capabilities: 
 
-The instructions that follow assume a basic understanding of Linux. Steps 1-17 will get you up and running. Steps 18-23 introduce key concepts pertaining to form creation and related goodness. 
+- [Introducing kvkit](https://www.youtube.com/watch?v=8MAVnpEiCUA)
+- [kvkit for Splunk KV Store Management](https://www.youtube.com/watch?v=8BYFpkHvMc4)
+- [CRUD on Splunk with kvkit](https://www.youtube.com/watch?v=PD4oLOrNqYQ&t=1s)
+
+NOTE: These videos were created when kvkit was commercially licensed under [RedFactor](https://redfactorapps.com). The application is now free and open (MIT!) and RedFactor is being rebranded.
 
 ## Splunk configuration
 1. Create `kvkit_rest` account on your search head or search head cluster. This account will be used for all kvkit interaction between kvkit and the Splunk REST API. Ensure that the account has all REST capabilities. 
