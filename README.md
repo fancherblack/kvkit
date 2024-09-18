@@ -9,7 +9,7 @@ kvkit is a tiny Express app that provides big Splunk KV Store management capabil
 NOTE: These videos were created when kvkit was commercially licensed under [RedFactor](https://redfactorapps.com). The application is now free and open (MIT!) and RedFactor is being rebranded.
 
 ## Splunk configuration
-1. Create `kvkit_rest` account on your search head or search head cluster. This account will be used for all kvkit interaction between kvkit and the Splunk REST API. Ensure that the account has all REST capabilities. 
+1. Create `kvkit_rest` account on your search head or search head cluster and assign the `admin` role. This account will be used for all backend interaction between kvkit and the Splunk REST API.  
 2. Create a new index named `kvkit`. This index will contain all kvkit application-level logging. 
 3. Create a new HTTP Event Collector configuration with a default index of `kvkit`.
 4. Create a role named `kvkit_admin` without any capabilities or inheritance. Any Splunk user assigned to this role will have access to the kvkit application.  Users are not provisioned in kvkit.
